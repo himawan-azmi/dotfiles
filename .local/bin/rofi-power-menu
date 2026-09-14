@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# Opsi pilihan menu (Gunakan emoji/ikon agar menarik)
+shutdown="🔒 Shutdown"
+reboot="🔄 Reboot"
+lock="🔑 Lock"
+suspend="💤 Suspend"
+logout="🚪 Logout"
+
+# Gabungkan opsi menjadi daftar pilihan untuk Rofi
+options="$lock\n$suspend\n$logout\n$reboot\n$shutdown"
+
+# Panggil Rofi dan tangkap pilihan user
+chosen="$(echo -e "$options" | rofi -dmenu -i -p "Power Menu:" -theme-str 'window {width: 25ch;} listview {lines: 5;}')"
+
+# Eksekusi perintah berdasarkan pilihan
+case $chosen in
+    $shutdown)
+        systemctl poweroff
+        ;;
+    $reboot)
+        systemctl reboot
+        ;;
+    $lock)
+        # Pastikan Anda sudah menginstal i3lock jika ingin fitur ini jalan
+        i3lock
+        ;;
+    $suspend)
+        systemctl suspend
+        ;;
+    $logout)
+        i3-msg exit
+        ;;
+esac
+
