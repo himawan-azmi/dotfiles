@@ -1,6 +1,31 @@
 #!/usr/bin/env bash
 
-# Konfigurasi Warna (Hex: RRGGBBAA)
+# Path Aset
+AVATAR="$HOME/.config/i3/assets/avatar.png"
+TEMP_BG="/tmp/screen_locked.png"
+
+# 1. Ambil screenshot gabungan seluruh layar
+scrot -o $TEMP_BG
+
+# 2. DETEKSI MONITOR UTAMA (Mencegah avatar lari ke layar eksternal)
+# Mencari informasi resolusi dan posisi offset monitor yang berstatus 'primary'
+PRIMARY_INFO=$(xrandr | grep -w "primary")
+WIDTH=$(echo "$PRIMARY_INFO" | awk '{print $4}' | cut -d'x' -f1)
+HEIGHT=$(echo "$PRIMARY_INFO" | awk '{print $4}' | cut -d'x' -f2 | cut -d'+' -f1)
+X_OFFSET=$(echo "$PRIMARY_INFO" | awk '{print $4}' | cut -d'+' -f2)
+Y_OFFSET=$(echo "$PRIMARY_INFO" | awk '{print $4}' | cut -d'+' -f3)
+
+# Hitung titik tengah monitor utama dikurangi setengah ukuran avatar (128/2 = 64)
+# Serta geser posisi vertikal ke atas (-240) agar pas berada di atas teks Jam
+X_CENTER=$(( X_OFFSET + (WIDTH / 2) - 64 ))
+Y_CENTER=$(( Y_OFFSET + (HEIGHT / 2) - 240 ))
+
+# 3. Proses gambar: berikan efek blur dan tempel avatar di koordinat monitor utama
+convert $TEMP_BG -blur 0x8 \
+        -draw "image over $X_CENTER,$Y_CENTER 128,128 '$AVATAR'" \
+        $TEMP_BG
+
+# Palet Warna Lingkaran (Hex: RRGGBBAA)
 BLANK='#00000000'
 CLEAR='#ffffff22'
 DEFAULT='#89b4fa'     # Biru muda pastel
@@ -8,27 +33,58 @@ TEXT='#cdd6f4'        # Putih lembut
 WRONG='#f38ba8'       # Merah (salah password)
 VERIFY='#a6e3a1'      # Hijau (verifikasi)
 
+# Sembunyikan notifikasi saat layar terkunci
+command -v dunstctl &> /dev/null && dunstctl set-paused true
+
+# 4. Panggil i3lock-color
 i3lock \
---insidever-color=$CLEAR     \
---ringver-color=$VERIFY       \
---insidewrong-color=$CLEAR   \
---ringwrong-color=$WRONG     \
---inside-color=$BLANK        \
---ring-color=$DEFAULT        \
---line-color=$BLANK          \
---separator-color=$BLANK     \
---verif-color=$TEXT          \
---wrong-color=$WRONG         \
---time-color=$TEXT           \
---date-color=$TEXT           \
---layout-color=$TEXT         \
---keyhl-color=$VERIFY        \
---bshl-color=$WRONG          \
+--image=$TEMP_BG \
+--indicator \
+--clock \
 \
---screen=1                   \
---blur=7                     \
---clock                      \
---indicator                  \
---time-str="%H:%M:%S"        \
---date-str="%A, %Y-%m-%d"    \
---keylayout 1
+--ind-pos="x+w/2:y+h/2+190" \
+--time-pos="x+w/2:y+h/2+20" \
+--date-pos="x+w/2:y+h/2+60" \
+--greeter-pos="x+w/2:y+h/2-40" \
+\
+--greeter-text="Selamat Datang Kembali!" \
+--greeter-size=22 \
+--greeter-color=$TEXT \
+--greeter-font="sans-serif" \
+\
+--time-str="%I:%M %p" \
+--time-size=64 \
+--time-color=$TEXT \
+--time-font="sans-serif" \
+\
+--date-str="%A, %d %B %Y" \
+--date-size=16 \
+--date-color=$TEXT \
+--date-font="sans-serif" \
+\
+--insidever-color=$BLANK \
+--ringver-color=$VERIFY \
+--insidewrong-color=$BLANK \
+--ringwrong-color=$WRONG \
+--inside-color=$BLANK \
+--ring-color=$DEFAULT \
+--line-color=$BLANK \
+--separator-color=$BLANK \
+--verif-text="Mencocokkan..." \
+--verif-color=$VERIFY \
+--wrong-text="Password Salah!" \
+--wrong-color=$WRONG \
+--layout-color=$BLANK \
+--keyhl-color=$VERIFY \
+--bshl-color=$WRONG \
+\
+--screen=1 \
+--pass-media-keys \
+--pass-screen-keys
+
+# Aktifkan kembali notifikasi setelah layar terbuka
+command -v dunstctl &> /dev/null && dunstctl set-paused false
+
+# Hapus gambar sementara
+rm $TEMP_BG
+

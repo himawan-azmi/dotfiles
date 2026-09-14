@@ -2,7 +2,7 @@
 set $mod Mod4
 
 # Start a Terminal
-bindsym $mod+Return exec --no-startup-id xfce4-terminal
+bindsym $mod+Return exec --no-startup-id alacritty
 
 # Start Rofi (a program launcher)
 bindsym $mod+d exec --no-startup-id j4-dmenu-desktop --dmenu='rofi -dmenu -lines 6 --width 400 -i --sort -p RUN'
@@ -217,28 +217,31 @@ mode "resize" {
 # gaps inner|outer
 #      current|all
 #      set|plus|minus <px>
-gaps inner 0
-gaps outer 0
+gaps inner 8
+gaps outer 4
 smart_gaps on
 
 # Jalankan skrip peluncur Polybar setiap kali i3 restart/start
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 
-# Background Wallpaper
-exec_always --no-startup-id feh --bg-fill -Z /usr/share/backgrounds/Dynamic_Wallpapers/EOS-Sunset/PadarIsland-0.png
+# Jalankan skrip wallpaper otomatis setiap kali i3 dimulai/dimuat ulang
+exec_always --no-startup-id ~/.local/bin/set-wallpaper
 
-# i3lock lockscreen
-# (lock is bash script from nandavera | i3lock-color)
-# Source: https://github.com/okitavera/dotfiles/blob/master/.bin/lock
-bindsym $mod+Shift+x exec --no-startup-id /usr/bin/lock-dark
-exec_always --no-startup-id xautolock -time 15 -locker "/usr/bin/lock-dark" && echo mem ? /sys/power/state
+# Shortcut untuk mengunci layar dengan efek blur estetis
+bindsym $mod+Shift+x exec --no-startup-id ~/.local/bin/blur-lock
+
+# Mengunci layar menggunakan skrip kustom saat sistem suspend atau sleep
+exec --no-startup-id xss-lock --transfer-sleep-lock -- ~/.local/bin/blur-lock --nofork
+
+# Kunci layar otomatis jika tidak ada aktivitas selama 5 menit (300 detik)
+exec --no-startup-id xautolock -time 5 -locker "~/.local/bin/blur-lock --nofork"
 
 # XFCE4-power-manager
 exec --no-startup-id xfce4-power-manager
 
 # Clipmenu
 exec --no-startup-id clipmenud
-bindsym $mod+p exec --no-startup-id CM_LAUNCHER=rofi clipmenu
+bindsym $mod+p exec --no-startup-id CM_LAUNCHER=rofi clipmenu && xdotool key ctrl+v
 bindsym $mod+Shift+p exec --no-startup-id rm -rf /tmp/clipmenu/*
 
 # Enable Dunst Notifications
@@ -271,3 +274,6 @@ exec_always --no-startup-id picom -b --backend glx --config ~/.config/picom.conf
 
 # Jalankan Rofi Power Menu buatan sendiri
 bindsym $mod+Shift+e exec --no-startup-id ~/.local/bin/rofi-power-menu
+
+# Menjalankan Polkit Authentication Agent secara otomatis
+exec --no-startup-id lxpolkit
