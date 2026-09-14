@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# Buat folder jika belum ada
+DIR="$HOME/Pictures/Screenshots"
+mkdir -p "$DIR"
+
+# Format nama file: Tahun-Bulan-Hari_Jam-Menit-Detik.png
+FILE="$DIR/$(date +'%Y-%m-%d_%H-%M-%S').png"
+
+# Ambil argumen mode dari i3 (full, window, atau select)
+MODE=$1
+
+case $MODE in
+    window)
+        scrot -u "$FILE"
+        ;;
+    select)
+        # Menambahkan parameter -f untuk membekukan visual layar agar seleksi lebih mulus
+        scrot -s -f "$FILE"
+        ;;
+    *)
+        scrot "$FILE"
+        ;;
+esac
+
+# Jika pengambilan gambar berhasil
+if [ -f "$FILE" ]; then
+    # Salin file gambar ke clipboard agar bisa langsung di-paste ke Discord/Telegram/WA
+    xclip -selection clipboard -t image/png -i "$FILE"
+    # Munculkan notifikasi pop-up di pojok layar
+    notify-send "📸 Screenshot Berhasil" "Disimpan di: $FILE\n(Sudah disalin ke clipboard)" -i camera-photo
+fi
+

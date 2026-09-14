@@ -277,3 +277,13 @@ bindsym $mod+Shift+e exec --no-startup-id ~/.local/bin/rofi-power-menu
 
 # Menjalankan Polkit Authentication Agent secara otomatis
 exec --no-startup-id lxpolkit
+
+# 1. Mengambil screenshot seluruh layar (Full Screen - langsung jalan)
+bindsym Print exec --no-startup-id ~/.local/bin/take-screenshot full
+
+# 2. Mengambil screenshot area tertentu (Shift + Print - Wajib pakai --release)
+bindsym --release Shift+Print exec --no-startup-id ~/.local/bin/take-screenshot select
+
+# 3. Mengambil screenshot jendela aktif (Alt + Print - Wajib pakai --release)
+bindsym --release Mod1+Sys_Req exec --no-startup-id ~/.local/bin/take-screenshot window
+
