@@ -270,7 +270,7 @@ bindsym $mod+F5 exec --no-startup-id arandr
 bindsym $mod+Mod1+n exec --no-startup-id networkmanager_dmenu
 
 # Menjalankan Picom secara otomatis di background
-exec_always --no-startup-id picom -b --backend glx --config ~/.config/picom.conf
+exec_always --no-startup-id killall -q picom; picom -b --config ~/.config/picom/picom.conf
 
 # Jalankan Rofi Power Menu buatan sendiri
 bindsym $mod+Shift+e exec --no-startup-id ~/.local/bin/rofi-power-menu
