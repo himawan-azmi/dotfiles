@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# Memastikan feh memilih satu gambar acak dari folder wallpaper secara stabil
+feh --bg-fill --randomize ~/Pictures/Wallpapers/
