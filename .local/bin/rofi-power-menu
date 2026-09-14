@@ -23,7 +23,7 @@ case $chosen in
         ;;
     $lock)
         # Pastikan Anda sudah menginstal i3lock jika ingin fitur ini jalan
-        i3lock
+	~/.local/bin/blur-lock
         ;;
     $suspend)
         systemctl suspend
