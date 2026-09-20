@@ -233,8 +233,8 @@ bindsym $mod+Shift+x exec --no-startup-id ~/.local/bin/blur-lock
 # Mengunci layar menggunakan skrip kustom saat sistem suspend atau sleep
 exec --no-startup-id xss-lock --transfer-sleep-lock -- ~/.local/bin/blur-lock --nofork
 
-# Kunci layar otomatis jika tidak ada aktivitas selama 5 menit (300 detik)
-exec --no-startup-id xautolock -time 5 -locker "~/.local/bin/blur-lock --nofork"
+# Kunci layar otomatis jika tidak ada aktivitas (dalam menit)
+exec --no-startup-id xautolock -time 30 -locker "~/.local/bin/blur-lock --nofork"
 
 # XFCE4-power-manager
 exec --no-startup-id xfce4-power-manager
